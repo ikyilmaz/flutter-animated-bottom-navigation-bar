@@ -1,4 +1,4 @@
-# MyApp
+# Animated Bottom Navigation Bar
 
 A new Flutter project.
 
