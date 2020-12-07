@@ -19,14 +19,19 @@ class MyHomePage extends StatefulWidget {
       title: "Home",
     ),
     NavItem(
+      icon: Icons.search,
+      color: Colors.white,
+      title: "Search",
+    ),
+    NavItem(
       icon: Icons.add_box_outlined,
       color: Colors.white,
       title: "Add",
     ),
     NavItem(
-      icon: Icons.search,
+      icon: Icons.person,
       color: Colors.white,
-      title: "Search",
+      title: "Profile",
     ),
     NavItem(
       icon: Icons.settings,
@@ -43,13 +48,12 @@ class MyHomePage extends StatefulWidget {
   ];
 
   final double _navHeight = 50;
+  final double _iconSize = 24;
 
   final Curve _curve = Curves.elasticOut;
   final Duration _animationDuration = Duration(seconds: 1);
 
-  MyHomePage({
-    Key key,
-  }) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -76,18 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
           value: _value,
           items: [
             ...widget.dropdownItems.map(
-              (e) => DropdownMenuItem(
-                child: Text(e),
-                value: e,
-              ),
+              (e) => DropdownMenuItem(child: Text(e), value: e),
             )
           ],
           onChanged: (value) => setState(() => _value = value),
         ),
       ),
       bottomNavigationBar: Container(
-        width: double.infinity,
-        height: 50,
+        height: widget._navHeight,
         decoration: BoxDecoration(
             color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.vertical(
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ...widget._navItems.asMap().entries.map((e) {
                   final int index = e.key;
@@ -117,16 +117,19 @@ class _MyHomePageState extends State<MyHomePage> {
                           // border: Border(right: BorderSide(width: 1)),
                         ),
                         child: Stack(
+                          alignment: Alignment.bottomRight,
                           children: [
                             AnimatedPositioned(
                               duration: widget._animationDuration,
                               curve: widget._curve,
                               top: isActive
                                   ? -(widget._navHeight / 2)
-                                  : (widget._navHeight / 4),
+                                  : (widget._navHeight / 2) -
+                                      (widget._iconSize / 2),
                               left: tabWidth / 2 - 10,
                               child: Icon(
                                 e.value.icon,
+                                size: widget._iconSize,
                                 color: Theme.of(context)
                                     .primaryTextTheme
                                     .button
@@ -138,7 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               curve: widget._curve,
                               width: tabWidth,
                               bottom: isActive
-                                  ? (widget._navHeight / 4)
+                                  ? (widget._navHeight / 2) -
+                                      (widget._iconSize / 2)
                                   : -(widget._navHeight / 2),
                               child: Text(
                                 e.value.title,
@@ -162,8 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             AnimatedPositioned(
-              bottom: -2,
-              left: (tabWidth * _activeIndex) + tabWidth / 7,
+              bottom: 0,
+              left: (tabWidth * _activeIndex) + tabWidth / 6.5,
               child: Container(
                 width: tabWidth * 0.7,
                 height: 6,
