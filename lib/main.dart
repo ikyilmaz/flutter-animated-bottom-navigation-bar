@@ -5,14 +5,14 @@ void main(List<String> args) {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Animated Bottom Navigation Bar',
-      theme: ThemeData(primarySwatch: Colors.teal),
+      theme: ThemeData(primarySwatch: Colors.blueGrey),
       home: MyHomePage(),
     ),
   );
 }
 
 class MyHomePage extends StatefulWidget {
-  final List<NavItem> items = [
+  final List<NavItem> _navItems = [
     NavItem(
       icon: Icons.home,
       color: Colors.white,
@@ -24,11 +24,28 @@ class MyHomePage extends StatefulWidget {
       title: "Add",
     ),
     NavItem(
+      icon: Icons.search,
+      color: Colors.white,
+      title: "Search",
+    ),
+    NavItem(
       icon: Icons.settings,
       color: Colors.white,
       title: "Settings",
     ),
   ];
+
+  final List<String> dropdownItems = [
+    "Day",
+    "Night",
+    "Day and Night",
+    "Midnight"
+  ];
+
+  final double _navHeight = 50;
+
+  final Curve _curve = Curves.elasticOut;
+  final Duration _animationDuration = Duration(seconds: 1);
 
   MyHomePage({
     Key key,
@@ -40,33 +57,47 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _activeIndex = 0;
-
-  final Curve _curve = Curves.elasticOut;
-  final Duration _animationDuration = Duration(seconds: 1);
+  String _value = "Day";
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final tabWidth = size.width / widget.items.length;
+    final tabWidth = size.width / widget._navItems.length;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Animated Bottom Navigation Bar'),
         centerTitle: true,
+        automaticallyImplyLeading: true,
       ),
       body: Center(
-        child: Text("Hello World!"),
+        child: DropdownButton(
+          icon: Icon(Icons.wb_sunny),
+          value: _value,
+          items: [
+            ...widget.dropdownItems.map(
+              (e) => DropdownMenuItem(
+                child: Text(e),
+                value: e,
+              ),
+            )
+          ],
+          onChanged: (value) => setState(() => _value = value),
+        ),
       ),
       bottomNavigationBar: Container(
         width: double.infinity,
         height: 50,
-        color: Theme.of(context).primaryColor,
+        decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(widget._navHeight / 1.5))),
         child: Stack(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ...widget.items.asMap().entries.map((e) {
+                ...widget._navItems.asMap().entries.map((e) {
                   final int index = e.key;
                   final bool isActive = _activeIndex == index;
 
@@ -88,25 +119,35 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Stack(
                           children: [
                             AnimatedPositioned(
-                              duration: _animationDuration,
-                              curve: _curve,
-                              top: isActive ? -30 : 15,
+                              duration: widget._animationDuration,
+                              curve: widget._curve,
+                              top: isActive
+                                  ? -(widget._navHeight / 2)
+                                  : (widget._navHeight / 4),
                               left: tabWidth / 2 - 10,
                               child: Icon(
                                 e.value.icon,
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .primaryTextTheme
+                                    .button
+                                    .color,
                               ),
                             ),
                             AnimatedPositioned(
-                              duration: _animationDuration,
-                              curve: _curve,
+                              duration: widget._animationDuration,
+                              curve: widget._curve,
                               width: tabWidth,
-                              bottom: isActive ? 15 : -30,
+                              bottom: isActive
+                                  ? (widget._navHeight / 4)
+                                  : -(widget._navHeight / 2),
                               child: Text(
                                 e.value.title,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                      .primaryTextTheme
+                                      .button
+                                      .color,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -127,12 +168,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: tabWidth * 0.7,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).primaryTextTheme.button.color,
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              curve: _curve,
-              duration: _animationDuration,
+              curve: widget._curve,
+              duration: widget._animationDuration,
             )
           ],
         ),
